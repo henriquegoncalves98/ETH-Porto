@@ -12,29 +12,36 @@ const generator: GroupGenerator = {
 
   generate: async (context: GenerationContext): Promise<GroupWithData[]> => {
     const groups: GroupWithData[] = [];
+    const thresholds = [32, 64, 128];
     const bigQueryProvider = new BigQueryProvider();
-    const query = `
-      -- returns 133,628 addresses as of 16/03/2023
+
+    for (const threshold of thresholds) {
+      // returns 133,628 addresses for 32 ETH as of 16/03/2023
+      const query = `
       SELECT
         address, 1 as value
       FROM
         \`bigquery-public-data.crypto_ethereum.balances\`
       WHERE
-        eth_balance >= 32000000000000000000.0;
+        eth_balance >= ${threshold}000000000000000000.0;
         `;
 
-    const richUsers = dataOperators.Map(await bigQueryProvider.fetch(query), 1);
+      const richUsers = dataOperators.Map(
+        await bigQueryProvider.fetch(query),
+        1
+      );
 
-    groups.push({
-      name: `ethereum-balances-at-least-32`,
-      timestamp: context.timestamp,
-      description: `Ethereum users with at least 32 ETH`,
-      specs: "Be Rich",
-      data: richUsers,
-      accountSources: [AccountSource.ETHEREUM],
-      valueType: ValueType.Score,
-      tags: [Tags.User, Tags.Mainnet],
-    });
+      groups.push({
+        name: `ethereum-balances-at-least-${threshold}`,
+        timestamp: context.timestamp,
+        description: `Ethereum users with at least ${threshold} ETH`,
+        specs: "Be Rich",
+        data: richUsers,
+        accountSources: [AccountSource.ETHEREUM],
+        valueType: ValueType.Score,
+        tags: [Tags.User, Tags.Mainnet],
+      });
+    }
     return groups;
   },
 };
