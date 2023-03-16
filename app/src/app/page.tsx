@@ -1,10 +1,24 @@
+'use client';
+
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from './page.module.css'
 
+import { ZkConnect, ZkConnectClientConfig } from "@sismo-core/zk-connect-client";
+import { zkConnectBackend } from "./zkconnect-backend";
+import { useRouter } from 'next/router';
+
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+  const router = useRouter();
+  console.log(router.query)
+  const loginZk = async () => {
+    // Now that you have the proof, you need to verify it in your backend to be sure that the proof is valid. If yes, you will allow your user to access your application.
+    if(!zkConnectResponse) return;
+    const { vaultId } = await zkConnectBackend.verify(zkConnectResponse);
+
+  }
   return (
     <main className={styles.main}>
       <div className={styles.description}>
@@ -89,3 +103,19 @@ export default function Home() {
     </main>
   )
 }
+
+
+const zkConnectConfig: ZkConnectClientConfig = {
+  appId: "0x52913711b4d9d877a522b06170b5648f", // appId you registered
+}
+
+const zkConnect = ZkConnect(zkConnectConfig);
+
+zkConnect.request();
+
+// user gets redirected to prove his data vault
+
+const zkConnectResponse = zkConnect.getResponse(); // when he gets redirected to our app
+
+
+// If the proof is valid, a vaultId is returned. If not, an error is received.
