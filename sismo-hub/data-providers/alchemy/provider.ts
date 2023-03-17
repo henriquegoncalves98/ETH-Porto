@@ -1,6 +1,6 @@
 import axios from "axios";
-import { QueryCollectionOwnersInput } from "./types";
 import { FetchedData } from "topics/group";
+import { QueryCollectionOwnersInput } from "./types";
 
 export class AlchemyProvider {
   url: string;
@@ -13,12 +13,17 @@ export class AlchemyProvider {
   public async queryCollectionOwners({
     contractAddress,
   }: QueryCollectionOwnersInput): Promise<FetchedData> {
+    const fetchedData: { [address: string]: number } = {};
     const res = await axios({
       url: `${this.url}${this._alchemyAppToken}/getOwnersForCollection`,
       method: "get",
       params: { contractAddress },
     });
-    return res.data.ownerAddresses;
+
+    res.data.ownerAddresses?.map(
+      (address: string) => (fetchedData[address] = 1)
+    );
+    return fetchedData;
   }
 
   public async queryCollectionOwnersCount({

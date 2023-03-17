@@ -1,9 +1,8 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from './page.module.css'
+import Image from "next/image";
+import { Inter } from "next/font/google";
 
 import {
   DataRequest,
@@ -17,7 +16,7 @@ const zkConnectConfig: ZkConnectClientConfig = {
   devMode: {
     enabled: true, // will use the Dev Sismo Data Vault https://dev.vault-beta.sismo.io/
     devAddresses : [ // Will insert these addresses in data groups as eligible addresse
-	    "0xb7626fecD1B291D806Ad7f6D56Ca29926Beb69ea", 
+	    "", 
     ]
   }
 };
@@ -27,7 +26,7 @@ const THE_ETH_RICH_USERS = DataRequest({
   groupId: "0x42c768bb8ae79e4c5c05d3b51a4ec74a", // TODO: change this id to our group id created by Tom when PR merged
 });
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const [verifying, setVerifying] = useState(false);
@@ -35,7 +34,7 @@ export default function Home() {
   const [zkConnectResponse, setZkConnectResponse] =
     useState<ZkConnectResponse | null>(null);
 
-  function onZkConnectButtonClick() { 
+  function onZkConnectButtonClick() {
     // user gets redirected to get proof on data vault
     zkConnect.request({
       dataRequest: THE_ETH_RICH_USERS,
@@ -44,35 +43,40 @@ export default function Home() {
 
   useEffect(() => {
     const zkConnectResponse = zkConnect.getResponse();
-    if (zkConnectResponse) { // when user gets redirected to our app
+    if (zkConnectResponse) {
+      // when user gets redirected to our app
       setZkConnectResponse(zkConnectResponse);
       setVerifying(true);
 
       // If the proof is verified, a vaultId is returned. If not, an error is received.
-      fetch('/api/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      fetch("/api/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          zkConnectResponse
+          zkConnectResponse,
         }),
       }).then(res => {
         setVerifying(false);
         console.log(res);
         // setStatus(res.body.status);
       })
-      .catch(err => {
-        console.log(err.response.data.status);
-        setVerifying(false);
-      });
+        .then((res) => {
+          setVerifying(false);
+          // SUCCESS REDIRECT TO AUCTION PAGE
+        })
+        .catch((err) => {
+          console.log(err.response.data.status);
+          setVerifying(false);
+        });
     }
   }, []);
 
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
+    <main>
+      <div>
         <p>
           Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
+          <code>src/app/page.tsx</code>
         </p>
         <div>
           <a
@@ -80,11 +84,10 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            By{' '}
+            By{" "}
             <Image
               src="/vercel.svg"
               alt="Vercel Logo"
-              className={styles.vercelLogo}
               width={100}
               height={24}
               priority
@@ -92,25 +95,18 @@ export default function Home() {
           </a>
         </div>
       </div>
-
-      <div className={styles.center}>
-        <button
-          className={styles.thirteen}
-          onClick={onZkConnectButtonClick}
-          disabled={verifying}
-        >
-          {verifying ? (
-              <span>verifying...</span>
-          ) : (
-              <span>zkConnect</span>
-          )}
+      <h1 className="text-3xl font-bold text-purple-400 underline">
+        Hello world!
+      </h1>
+      <div>
+        <button onClick={onZkConnectButtonClick} disabled={verifying}>
+          {verifying ? <span>verifying...</span> : <span>zkConnect</span>}
         </button>
       </div>
 
-      <div className={styles.grid}>
+      <div>
         <a
           href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -124,7 +120,6 @@ export default function Home() {
 
         <a
           href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -136,7 +131,6 @@ export default function Home() {
 
         <a
           href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -149,5 +143,5 @@ export default function Home() {
         </a>
       </div>
     </main>
-  )
+  );
 }
