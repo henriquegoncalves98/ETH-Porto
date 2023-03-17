@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
-import { Inter } from "next/font/google";
 
 import {
   DataRequest,
@@ -27,30 +26,18 @@ const THE_ETH_RICH_USERS = DataRequest({
   groupId: "0x42c768bb8ae79e4c5c05d3b51a4ec74a", // TODO: change this id to our group id created by Tom when PR merged
 });
 
-const inter = Inter({ subsets: ["latin"] });
-
 const verifyLogin = async (zkConnectResponse: ZkConnectResponse) => {
   debugger;
-  const response = await fetch("/api/hello", {
-    method: "GET",
+  const res = await fetch("/api/verify", {
+    method: "POST",
     headers: { "Content-Type": "application/json" },
-    // body: JSON.stringify({
-    //   zkConnectResponse,
-    // }),
+    body: JSON.stringify({
+      zkConnectResponse,
+    }),
   });
-  // .then((res) => {
-  //   setVerifying(false);
-  //   console.log(res);
-  //   // setStatus(res.body.status);
-  // })
-  // .then((res) => {
-  //   setVerifying(false);
-  //   // SUCCESS REDIRECT TO AUCTION PAGE
-  // })
-  // .catch((err) => {
-  //   console.log(err.response.data.status);
-  //   setVerifying(false);
-  // });
+  debugger;
+  if (res.status !== 200) return;
+  const response = await res.json();
 };
 
 export default function Home() {
