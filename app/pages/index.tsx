@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import { THE_ETH32_RICH_USERS } from '../shared/groups';
 
 import {
-  DataRequest,
   ZkConnect,
   ZkConnectClientConfig,
   ZkConnectResponse,
+  DataRequest
 } from "@sismo-core/zk-connect-client";
 
 const zkConnectConfig: ZkConnectClientConfig = {
@@ -22,11 +22,7 @@ const zkConnectConfig: ZkConnectClientConfig = {
 };
 const zkConnect = ZkConnect(zkConnectConfig);
 
-const THE_ETH_RICH_USERS = DataRequest({
-  groupId: "0x28e737a66c60878a0a2f45d440ffb042", // TODO: change this id to our group id created by Tom when PR merged
-});
-
-
+const vaultsConnected: string[] = [];
 
 export default function Home() {
   const [verifying, setVerifying] = useState(false);
@@ -37,7 +33,7 @@ export default function Home() {
   function onZkConnectButtonClick() {
     // user gets redirected to get proof on data vault
     zkConnect.request({
-      dataRequest: THE_ETH_RICH_USERS,
+      dataRequest: DataRequest(THE_ETH32_RICH_USERS),
     });
   }
 
@@ -55,6 +51,7 @@ export default function Home() {
       if (res.status !== 200) return;
       const response = await res.json();
       setStatus(response.status);
+      vaultsConnected.push(response.vaultId)
     };
     
     const zkConnectResponse = zkConnect.getResponse();
@@ -74,11 +71,15 @@ export default function Home() {
           </button>
         )}
 
-        {/* {status && (
+        {status && (
           <ul>
-            {}
+            {vaultsConnected.map((vaultId) => (
+              <li key={vaultId}>
+                Vault <span>{vaultId}</span> connected successfully!
+              </li>
+            ))}
           </ul>
-        )} */}
+        )}
       </div>
     </main>
   );
