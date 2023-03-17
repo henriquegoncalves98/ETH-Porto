@@ -12,10 +12,14 @@ import {
   ZkConnectResponse,
 } from "@sismo-core/zk-connect-client";
 
-import { useRouter } from 'next/router';
-
 const zkConnectConfig: ZkConnectClientConfig = {
-  appId: "0x52913711b4d9d877a522b06170b5648f"
+  appId: "0x52913711b4d9d877a522b06170b5648f",
+  devMode: {
+    enabled: true, // will use the Dev Sismo Data Vault https://dev.vault-beta.sismo.io/
+    devAddresses : [ // Will insert these addresses in data groups as eligible addresse
+	    "0xb7626fecD1B291D806Ad7f6D56Ca29926Beb69ea", 
+    ]
+  }
 };
 const zkConnect = ZkConnect(zkConnectConfig);
 
@@ -27,6 +31,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   const [verifying, setVerifying] = useState(false);
+  const [status, setStatus] = useState<"already-inside" | "enter-auction" | null> (null);
   const [zkConnectResponse, setZkConnectResponse] =
     useState<ZkConnectResponse | null>(null);
 
@@ -36,14 +41,6 @@ export default function Home() {
       dataRequest: THE_ETH_RICH_USERS,
     });
   }
-
-  // const router = useRouter();
-  // console.log(router.query)
-  // const loginZk = async () => {
-  //   // Now that you have the proof, you need to verify it in your backend to be sure that the proof is valid. If yes, you will allow your user to access your application.
-  //   if(!zkConnectResponse) return;
-  //   const { vaultId } = await zkConnectBackend.verify(zkConnectResponse);
-  // }
 
   useEffect(() => {
     const zkConnectResponse = zkConnect.getResponse();
@@ -60,7 +57,8 @@ export default function Home() {
         }),
       }).then(res => {
         setVerifying(false);
-        // SUCCESS REDIRECT TO AUCTION PAGE
+        console.log(res);
+        // setStatus(res.body.status);
       })
       .catch(err => {
         console.log(err.response.data.status);
