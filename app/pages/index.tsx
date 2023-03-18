@@ -77,7 +77,7 @@ export default function Home() {
 
   const buttonText = () => {
     if (verifying) return "Verifying";
-    if (!vaultsConnected || vaultsConnected.length == 0) return "Book Ticket";
+    if (!vaultsConnected || vaultsConnected.length == 0) return "Get Ticket";
     if (vaultsConnected && vaultsConnected.length > 0) {
       return ``;
     }
