@@ -11,7 +11,28 @@ event without jeoperdizing clients private information.
 
 # How to run
 
+Code of the demo is in `./app`:
+
 ```
 cd app && yarn dev
 # open http://localhost:3000
 ```
+
+# Progress
+
+```
+./sismo-group
+```
+
+Allows verifying possession of 32, 64, 128 ETH on the Ethereum mainnet.
+Merged in https://github.com/sismo-core/sismo-hub/pull/1535
+
+```
+./sismo-hub
+```
+
+Allows using Alchemy for verifying various claims about NFT.
+
+Supports Ethereum, Polygon, Optimism, Arbitrum, Astar, Solana.
+
+PR Open: https://github.com/sismo-core/sismo-hub/pull/1538
