@@ -1,5 +1,7 @@
 "use client";
 
+import {QRCodeSVG} from 'qrcode.react';
+
 import { useEffect, useState } from "react";
 import {
   THE_ETH128_RICH_USERS,
@@ -19,7 +21,8 @@ const zkConnectConfig: ZkConnectClientConfig = {
   devMode: {
     enabled: true,
     devAddresses: [
-      "0xE4092E8EF085faabb384852e074A84Dcf1EceF29"
+      "0xE4092E8EF085faabb384852e074A84Dcf1EceF29",
+      "0x3740Ea52f5bBadde4c6aDe7aC324447611a2f1a7"
     ],
   },
 };
@@ -33,6 +36,7 @@ const eligibleGroups: { groupId: string; title: string }[] = [
 const zkConnect = ZkConnect(zkConnectConfig);
 
 const vaultsConnected: string[] = [];
+let proof: string | null = null;
 
 export default function Home() {
   const [verifying, setVerifying] = useState(false);
@@ -60,6 +64,7 @@ export default function Home() {
       const response = await res.json();
       setStatus(response.status);
       vaultsConnected.push(response.vaultId);
+      proof = response.toString();
     };
 
     const zkConnectResponse = zkConnect.getResponse();
@@ -72,14 +77,15 @@ export default function Home() {
 
   const buttonText = () => {
     if (verifying) return "Verifying";
-    if (!vaultsConnected || vaultsConnected.length == 0) return "Connect";
-    if (vaultsConnected && vaultsConnected.length > 0)
-      return "You good to join";
+    if (!vaultsConnected || vaultsConnected.length == 0) return "Book Ticket";
+    if (vaultsConnected && vaultsConnected.length > 0) {
+      return ``;
+    }
   };
   return (
     <main className="flex flex-col justify-center h-screen">
       <div className="mx-auto flex justify-center text-4xl text-black">
-        VC Event - Minimum entry 32 ETH
+        Private Event - Minimum entry 32 ETH
       </div>
       <div className="flex justify-center p-5">
         {(status == 'subscribed' || verifying) ? (
@@ -93,6 +99,9 @@ export default function Home() {
             {buttonText()}
           </button>
         )}
+      </div>
+      <div className="flex justify-center p-5">
+        {proof && <QRCodeSVG value={proof} />}
       </div>
     </main>
   );
