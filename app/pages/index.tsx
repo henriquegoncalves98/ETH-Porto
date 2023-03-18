@@ -1,13 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { THE_ETH32_RICH_USERS } from '../shared/groups';
+import {
+  THE_ETH128_RICH_USERS,
+  THE_ETH32_RICH_USERS,
+  THE_ETH64_RICH_USERS,
+} from "../shared/groups";
 
 import {
   ZkConnect,
   ZkConnectClientConfig,
   ZkConnectResponse,
-  DataRequest
+  DataRequest,
 } from "@sismo-core/zk-connect-client";
 
 const zkConnectConfig: ZkConnectClientConfig = {
@@ -20,15 +24,20 @@ const zkConnectConfig: ZkConnectClientConfig = {
     ],
   },
 };
+
+const eligibleGroups: { groupId: string; title: string }[] = [
+  { ...THE_ETH32_RICH_USERS, title: "Rich" },
+  { ...THE_ETH64_RICH_USERS, title: "Richer" },
+  { ...THE_ETH128_RICH_USERS, title: "Very Rich" },
+];
+
 const zkConnect = ZkConnect(zkConnectConfig);
 
 const vaultsConnected: string[] = [];
 
 export default function Home() {
   const [verifying, setVerifying] = useState(false);
-  const [status, setStatus] = useState<
-    "subscribed" | null
-  >(null);
+  const [status, setStatus] = useState<"subscribed" | null>(null);
 
   function onZkConnectButtonClick() {
     // user gets redirected to get proof on data vault
@@ -47,13 +56,13 @@ export default function Home() {
         }),
       });
       setVerifying(false);
-    
+
       if (res.status !== 200) return;
       const response = await res.json();
       setStatus(response.status);
-      vaultsConnected.push(response.vaultId)
+      vaultsConnected.push(response.vaultId);
     };
-    
+
     const zkConnectResponse = zkConnect.getResponse();
     if (zkConnectResponse) {
       // when user gets redirected to our app
@@ -62,25 +71,36 @@ export default function Home() {
     }
   }, []);
 
+  const buttonText = () => {
+    if (verifying) return "Verifying";
+    if (!vaultsConnected || vaultsConnected.length == 0) return "Connect";
+    if (vaultsConnected && vaultsConnected.length > 0)
+      return "You good to join";
+  };
   return (
-    <main>
-      <div>
-        {!status && (
-          <button onClick={onZkConnectButtonClick} disabled={verifying}>
-            {verifying ? <span>verifying...</span> : <span>zkConnect</span>}
-          </button>
-        )}
-
-        {status && (
-          <ul>
-            {vaultsConnected.map((vaultId) => (
-              <li key={vaultId}>
-                Vault <span>{vaultId}</span> connected successfully!
-              </li>
-            ))}
-          </ul>
-        )}
+    <main className="flex flex-col justify-center h-screen">
+      <div className="mx-auto flex justify-center text-4xl">
+        VC Event - Minimum entry 32 ETH
       </div>
+      <div className="flex justify-center p-5">
+        <button
+          className="btn rounded-lg w-64 overflow-ellipsis"
+          onClick={onZkConnectButtonClick}
+          disabled={!status || verifying}
+        >
+          {buttonText()}
+        </button>
+      </div>
+
+      {/* {status && (
+        <ul>
+          {vaultsConnected.map((vaultId) => (
+            <li key={vaultId}>
+              Vault <span>{vaultId}</span> connected successfully!
+            </li>
+          ))}
+        </ul>
+      )} */}
     </main>
   );
 }
