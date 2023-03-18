@@ -17,10 +17,9 @@ import {
 const zkConnectConfig: ZkConnectClientConfig = {
   appId: "0x52913711b4d9d877a522b06170b5648f",
   devMode: {
-    enabled: true, // will use the Dev Sismo Data Vault https://dev.vault-beta.sismo.io/
+    enabled: true,
     devAddresses: [
-      // Will insert these addresses in data groups as eligible addresse
-      "0xE4092E8EF085faabb384852e074A84Dcf1EceF29",
+      "0xE4092E8EF085faabb384852e074A84Dcf1EceF29"
     ],
   },
 };
@@ -79,28 +78,22 @@ export default function Home() {
   };
   return (
     <main className="flex flex-col justify-center h-screen">
-      <div className="mx-auto flex justify-center text-4xl">
+      <div className="mx-auto flex justify-center text-4xl text-black">
         VC Event - Minimum entry 32 ETH
       </div>
       <div className="flex justify-center p-5">
-        <button
-          className="btn rounded-lg w-64 overflow-ellipsis"
-          onClick={onZkConnectButtonClick}
-          disabled={!status || verifying}
-        >
-          {buttonText()}
-        </button>
+        {(status == 'subscribed' || verifying) ? (
+          <span className="text-black">{buttonText()}</span>
+        ) : (
+          <button
+            className="btn rounded-lg w-64 overflow-ellipsis"
+            onClick={onZkConnectButtonClick}
+            disabled={status == 'subscribed' || verifying}
+          >
+            {buttonText()}
+          </button>
+        )}
       </div>
-
-      {/* {status && (
-        <ul>
-          {vaultsConnected.map((vaultId) => (
-            <li key={vaultId}>
-              Vault <span>{vaultId}</span> connected successfully!
-            </li>
-          ))}
-        </ul>
-      )} */}
     </main>
   );
 }

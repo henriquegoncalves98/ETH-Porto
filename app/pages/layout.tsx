@@ -10,5 +10,5 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return <div className="bg-no-repeat bg-cover bg-left" style={{ backgroundImage: "url('dam-vault-background.jpg')" }}>{children}</div>;
 }
