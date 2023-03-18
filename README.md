@@ -9,6 +9,10 @@ leaking any private information like the wallet address, full balance, etc.
 This way the app can guarantee that only the minimal eligeble users enter the
 event without jeoperdizing clients private information.
 
+
+![img1](./img1.jpg)
+![img2](./img2.jpg)
+
 # How to run
 
 Code of the demo is in `./app`:
